@@ -6,7 +6,7 @@ Interfaccia web per il sistema Cucinometro, che permette di gestire pasti famili
 
 ### Con Docker Compose (Raccomandato)
 ```bash
-docker-compose up --build
+docker compose -f compose.yaml up -d --build
 ```
 
 Il sito sarà disponibile su: http://localhost:8002

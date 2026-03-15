@@ -7,7 +7,7 @@ Questa guida descrive come installare e avviare tutto l'ambiente partendo da un 
 - Git
 - Docker Desktop (con Docker Engine e Docker Compose v2)
 - PowerShell (Windows) o terminale equivalente
-- Porte libere: 5432, 8000, 8001, 8002
+- Porte libere: 5432, 8000, 8001, 8002, 8080
 
 ## 1. Checkout del progetto da GitHub
 
@@ -27,6 +27,14 @@ Servizi avviati:
 - API FastAPI
 - API Gateway Kong
 - Frontend Django
+- MCP Server (streamable-http)
+
+Nota:
+- Se in precedenza hai avviato container manualmente con `docker run` (es. `cucinometro-mcp`), fermali/rimuovili prima del compose per evitare conflitti di nome:
+
+```powershell
+docker rm -f cucinometro-mcp
+```
 
 ## 3. Inizializzazione schema database
 
@@ -42,6 +50,7 @@ Apri questi URL:
 - Web: http://localhost:8002
 - Gateway API: http://localhost:8000/api/health
 - API diretta: http://localhost:8001/internal/health
+- MCP endpoint: http://localhost:8080/mcp
 
 ## 5. Dati di prova (opzionale)
 
@@ -62,6 +71,7 @@ Dalla root del progetto:
 .\tests\test-kong.ps1
 .\tests\test-complete.ps1
 python .\tests\test_api.py
+.\tests\test-mcp.ps1
 ```
 
 Dettagli test in tests/README.md.

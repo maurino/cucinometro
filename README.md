@@ -7,10 +7,17 @@ Il sistema Cucinometro è una applicazione web completa per la gestione dei past
 
 Per la guida completa di installazione e avvio ambiente (incluso precaricamento opzionale dati di prova), vedi [install.md](install.md).
 
+## Documentazione
+
+- [install.md](install.md): installazione, avvio e comandi operativi
+- [comunicazioni.md](comunicazioni.md): mappa e grafici dei flussi tra i servizi
+- [tests/README.md](tests/README.md): panoramica e uso degli script di test
+
 ## Architettura
 - **API Backend**: FastAPI con PostgreSQL
 - **Web Frontend**: Django con interfaccia responsive
 - **API Gateway**: Kong per routing e trasformazione
+- **MCP Server**: endpoint tool per integrazione con client AI
 - **Database**: PostgreSQL
 - **Containerizzazione**: Docker Compose
 
@@ -18,7 +25,7 @@ Per la guida completa di installazione e avvio ambiente (incluso precaricamento 
 
 1. **Avvia tutti i servizi**:
    ```bash
-   docker-compose up -d
+   docker compose -f compose.yaml up -d --build
    ```
 
 2. **Verifica che tutto sia funzionante**:
@@ -31,6 +38,7 @@ Per la guida completa di installazione e avvio ambiente (incluso precaricamento 
 - **Interfaccia Web**: http://localhost:8002
 - **API Gateway**: http://localhost:8000
 - **API Diretta**: http://localhost:8001
+- **MCP Server**: http://localhost:8080/mcp
 - **Database**: localhost:5432
 
 ## Funzionalità
@@ -90,6 +98,11 @@ L'algoritmo intelligente:
 .\tests\test-complete.ps1
 ```
 
+### Test MCP Server
+```powershell
+.\tests\test-mcp.ps1
+```
+
 ## Sviluppatori
 
 ### Struttura Progetto
@@ -97,6 +110,7 @@ L'algoritmo intelligente:
 ├── api/              # Backend FastAPI
 ├── web/              # Frontend Django
 ├── gateway/          # Configurazione Kong
+├── mcp-server/       # Server MCP per client AI
 ├── sql/              # Script database
 ├── tests/            # Script di test
 ├── compose.yaml      # Docker Compose
@@ -113,7 +127,7 @@ L'algoritmo intelligente:
 ### Pulizia Database
 Per cancellare tutti i dati esistenti e rimuovere automaticamente i membri di test creati durante il testing:
 ```bash
-docker-compose exec db psql -U cucino -d cucinometro -f /app/sql/clear_data.sql
+docker compose -f compose.yaml exec db psql -U cucino -d cucinometro -f /app/sql/clear_data.sql
 ```
 
 **Nota**: Lo script `clear_data.sql` mantiene automaticamente solo i membri originali della famiglia (mauro, daniela, silvia, claudia, alessandra, giulia, francesco) e rimuove tutti i membri di test creati durante l'esecuzione degli script di test.
@@ -121,7 +135,7 @@ docker-compose exec db psql -U cucino -d cucinometro -f /app/sql/clear_data.sql
 ### Creazione Dati di Test
 Per popolare il database con dati di test realistici:
 ```bash
-docker-compose exec db psql -U cucino -d cucinometro -f /app/sql/seed_test_data.sql
+docker compose -f compose.yaml exec db psql -U cucino -d cucinometro -f /app/sql/seed_test_data.sql
 ```
 
 I dati di test includono:

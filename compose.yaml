@@ -48,6 +48,20 @@ services:
     ports:
       - "8002:8000"
 
+  mcp:
+    build:
+      context: ./mcp-server
+    container_name: cucinometro-mcp
+    depends_on:
+      - gateway
+    environment:
+      CUCINOMETRO_API_BASE_URL: http://gateway:8000/api
+      MCP_HOST: 0.0.0.0
+      MCP_PORT: 8080
+      MCP_HTTP_PATH: /mcp
+    ports:
+      - "8080:8080"
+
 volumes:
   db-data:
 
