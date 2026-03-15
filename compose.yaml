@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:16
+    container_name: cucinometro-db
+    environment:
+      POSTGRES_USER: cucino
+      POSTGRES_PASSWORD: cucino_pw
+      POSTGRES_DB: cucinometro
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./api
+    container_name: cucinometro-api
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+psycopg://cucino:cucino_pw@db:5432/cucinometro
+    ports:
+      - "8001:8000"
+
+  gateway:
+    image: kong:3.8
+    container_name: cucinometro-gateway
+    depends_on:
+      - api
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yaml
+      KONG_PROXY_LISTEN: "0.0.0.0:8000"
+      KONG_LOG_LEVEL: "info"
+    volumes:
+      - ./gateway/kong.yaml:/kong/declarative/kong.yaml:ro
+    ports:
+      - "8000:8000"
+
+  web:
+    build:
+      context: ./web
+    container_name: cucinometro-web
+    depends_on:
+      - gateway
+    environment:
+      API_BASE_URL: http://gateway:8000/api
+    ports:
+      - "8002:8000"
+
+volumes:
+  db-data:
+

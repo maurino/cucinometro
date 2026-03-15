@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiche Cucinometro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .summary {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .combo-card {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .combo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .combo-participants {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .combo-frequency {
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .stats-table th, .stats-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .stats-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .stats-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .stats-table tr:hover {
+            background-color: #e9ecef;
+        }
+        .member-count {
+            text-align: center;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn:hover { opacity: 0.8; }
+        .no-data {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+        }
+        .filter-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin-bottom: 20px;
+        }
+        .filter-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .filter-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 18px;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .filter-tag input {
+            margin: 0;
+        }
+        .filter-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        @media (max-width: 768px) {
+            .combo-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .stats-table { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Statistiche Cucinometro</h1>
+
+        <div class="summary">
+            <strong>Totale membri:</strong> {{ total_members }} |
+            <strong>Totale pasti:</strong> {{ total_meals }} |
+            <strong>Combinazioni uniche:</strong> {{ stats_list|length }}
+        </div>
+
+        <div class="summary" style="margin-top: 10px;">
+            <span id="comboCount">Mostrando 0 di {{ stats_list|length }} combo</span> |
+            <span id="mealCount">Pasti mostrati: 0</span>
+        </div>
+
+        <div class="filter-box">
+            <strong>Filtra per membri:</strong>
+            <div class="filter-members">
+                {% for member in members %}
+                <label class="filter-tag">
+                    <input type="checkbox" class="filter-checkbox" value="{{ member.name }}">
+                    {{ member.name }}
+                </label>
+                {% endfor %}
+            </div>
+            <div class="filter-actions">
+                <button id="clearFilters" class="btn btn-primary" type="button">Deseleziona tutti</button>
+                <button id="selectAll" class="btn btn-primary" type="button">Seleziona tutti</button>
+            </div>
+        </div>
+
+        {% if stats_list %}
+            {% for stats in stats_list %}
+            <div class="combo-card" data-members="{{ stats.participants|join:"," }}" data-total-meals="{{ stats.total_meals }}">
+                <div class="combo-header">
+                    <div class="combo-participants">
+                        👥 {{ stats.participants|join:" + " }}
+                    </div>
+                    <div class="combo-frequency">
+                        🍽️ {{ stats.total_meals }} pasti insieme
+                    </div>
+                </div>
+
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>Membro</th>
+                            <th>Lavaggi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member, count in stats.dishwashing_counts.items %}
+                        <tr>
+                            <td>{{ member }}</td>
+                            <td class="member-count">{{ count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-data">
+                <p>Nessuna statistica disponibile. Crea alcuni pasti per vedere le statistiche!</p>
+            </div>
+        {% endif %}
+
+        <div style="text-align: center;">
+            <a href="{% url 'meals:home' %}" class="btn btn-primary">🏠 Torna alla Home</a>
+        </div>
+    </div>
+
+    <script>
+        const checkboxes = document.querySelectorAll('.filter-checkbox');
+        const comboCards = document.querySelectorAll('.combo-card');
+        const comboCountEl = document.getElementById('comboCount');
+        const mealCountEl = document.getElementById('mealCount');
+
+        function updateComboCount() {
+            const visible = Array.from(comboCards).filter(card => card.style.display !== 'none').length;
+            const total = comboCards.length;
+            const visibleMeals = Array.from(comboCards)
+                .filter(card => card.style.display !== 'none')
+                .reduce((sum, card) => sum + Number(card.getAttribute('data-total-meals') || 0), 0);
+
+            if (comboCountEl) {
+                comboCountEl.textContent = `Mostrando ${visible} di ${total} combo`;
+            }
+            if (mealCountEl) {
+                mealCountEl.textContent = `Pasti mostrati: ${visibleMeals}`;
+            }
+        }
+
+        function updateFilters() {
+            const selected = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            comboCards.forEach(card => {
+                if (selected.length === 0) {
+                    card.style.display = 'none';
+                    return;
+                }
+
+                const members = card.getAttribute('data-members').split(',');
+                const matches = selected.every(name => members.includes(name));
+                card.style.display = matches ? '' : 'none';
+            });
+
+            updateComboCount();
+        }
+
+        document.getElementById('clearFilters').addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = false);
+            updateFilters();
+        });
+
+        document.getElementById('selectAll').addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = true);
+            updateFilters();
+        });
+
+        checkboxes.forEach(cb => cb.addEventListener('change', updateFilters));
+
+        updateFilters();
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risultato Lavapiatti - Cucinometro</title>
+    {% load markdown_tags %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .result-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .winner-name {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .dishwasher-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .explanation {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        .explanation h3 {
+            color: #007bff;
+            margin-top: 0;
+        }
+        .explanation table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .explanation th, .explanation td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .explanation th {
+            background: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .explanation tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .explanation tr:hover {
+            background: #e9ecef;
+        }
+        .meal-info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 5px;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn:hover { opacity: 0.8; }
+        .actions {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Risultato della Decisione</h1>
+
+        <div class="result-box">
+            <div class="dishwasher-icon">🧽</div>
+            <h2>Il lavapiatti designato è:</h2>
+            <div class="winner-name">{{ result.dishwasher }}</div>
+        </div>
+
+        <div class="meal-info">
+            <strong>Pasto del {{ date }} - {{ kind|meal_kind }}</strong><br>
+            <strong>Partecipanti:</strong> {{ participants|join:", " }}
+        </div>
+
+        {% if result.explanation %}
+        <div class="explanation">
+            <h3>💡 Come è stata presa la decisione:</h3>
+            <div>{{ result.explanation.explanation|markdownify }}</div>
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            <a href="{% url 'meals:decide_dishwasher' %}" class="btn btn-primary">🔄 Nuovo Calcolo</a>
+            <a href="{% url 'meals:home' %}" class="btn btn-success">🏠 Torna alla Home</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: cucinometro-api
+    url: http://api:8000
+    routes:
+      # Health
+      - name: api-health
+        paths:
+          - ~/api/health$
+        strip_path: false
+        plugins:
+          - name: request-transformer
+            config:
+              replace:
+                uri: /internal/health
+
+      # Members
+      - name: api-members
+        paths:
+          - ~/api/members$
+        methods:
+          - GET
+          - POST
+        strip_path: false
+        plugins:
+          - name: request-transformer
+            config:
+              replace:
+                uri: /internal/members
+
+      # Decide dishwasher (more specific than meals)
+      - name: api-decide-dishwasher
+        paths:
+          - ~/api/meals/decide-dishwasher$
+        methods:
+          - POST
+        strip_path: false
+        plugins:
+          - name: request-transformer
+            config:
+              replace:
+                uri: /internal/meals/decide-dishwasher
+
+      # Meal by id
+      - name: api-meal-by-id
+        paths:
+          - ~/api/meals/([0-9]+)$
+        methods:
+          - GET
+        strip_path: false
+        regex_priority: 10
+        plugins:
+          - name: request-transformer
+            config:
+              replace:
+                uri: /internal/meals/$(uri_captures[1])
+        methods:
+          - GET
+        strip_path: false
+        regex_priority: 10
+        plugins:
+          - name: request-transformer
+            config:
+              replace:
+                uri: /internal/meals/$(uri_captures[1])
+
+      # Meals list/create
+      - name: api-meals
+        paths:
+          - ~/api/meals$
+        methods:
+          - GET
+          - POST
+        strip_path: false
+        regex_priority: 1
+        plugins:
+          - name: request-transformer
+            config:
+              replace:
+                uri: /internal/meals
+

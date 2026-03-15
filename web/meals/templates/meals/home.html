@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cucinometro - Gestione Pasti</title>
+    {% load markdown_tags %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-info { background-color: #17a2b8; color: white; }
+        .btn-warning { background-color: #ffc107; color: #212529; }
+        .btn:hover { opacity: 0.8; }
+
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            color: #555;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .meal-card {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .meal-date { font-weight: bold; color: #007bff; }
+        .meal-kind { font-style: italic; color: #666; }
+        .participants { margin: 5px 0; }
+        .dishwasher { color: #28a745; font-weight: bold; }
+
+        .members-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .member-tag {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+        .alert {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        @media (max-width: 768px) {
+            .actions { flex-direction: column; }
+            .btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍽️ Cucinometro - Gestione Pasti</h1>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            <a href="{% url 'meals:create_meal' %}" class="btn btn-primary">➕ Nuovo Pasto</a>
+            <a href="{% url 'meals:decide_dishwasher' %}" class="btn btn-success">🧽 Decidi Lavapiatti</a>
+            <a href="{% url 'meals:create_member' %}" class="btn btn-info">👤 Nuovo Membro</a>
+            <a href="{% url 'meals:statistics' %}" class="btn btn-warning">📊 Statistiche</a>
+        </div>
+
+        <div class="section">
+            <h2>📅 Pasti Recenti</h2>
+            {% if meals %}
+                {% for meal in meals %}
+                <div class="meal-card">
+                    <div class="meal-date">{{ meal.date }} - <span class="meal-kind">{{ meal.kind|meal_kind }}</span></div>
+                    <div class="participants">
+                        <strong>Partecipanti:</strong> {{ meal.participants|join:", " }}
+                    </div>
+                    {% if meal.dishwasher %}
+                    <div class="dishwasher">
+                        🧽 Lavapiatti: {{ meal.dishwasher }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>Nessun pasto trovato. <a href="{% url 'meals:create_meal' %}">Crea il primo pasto</a></p>
+            {% endif %}
+        </div>
+
+        <div class="section">
+            <h2>👥 Membri della Famiglia</h2>
+            {% if members %}
+                <div class="members-list">
+                    {% for member in members %}
+                    <span class="member-tag">{{ member.name }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Nessun membro trovato. <a href="{% url 'meals:create_member' %}">Aggiungi il primo membro</a></p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

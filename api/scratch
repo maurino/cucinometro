@@ -1,0 +1,12 @@
+curl -X POST http://localhost:8001/internal/meals/decide-dishwasher  -H "Content-Type: application/json" -d "{\"date\":\"2026-03-13\",\"kind\":\"dinner\",\"participants\":[\"mauro\",\"daniela\",\"silvia\"],\"explain\":true}"
+
+
+PS D:\workbenches\cursor\cucinometro> curl -X POST http://localhost:8001/internal/meals/decide-dishwasher  -H "Content-Type: application/json" -d "{\"date\":\"2026-03-13\",\"kind\":\"dinner\",\"participants\":[\"mauro\",\"daniela\",\"silvia\"],\"explain\":true}"
+Invoke-WebRequest : Impossibile associare il parametro 'Headers'. Impossibile convertire il valore 
+"Content-Type: application/json" di tipo "System.String" nel tipo "System.Collections.IDictionary".       
+In riga:1 car:73
++ ... /meals/decide-dishwasher  -H "Content-Type: application/json" -d "{\" ...
++                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.InvokeWebRequ  
+   estCommand
