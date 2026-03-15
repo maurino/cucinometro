@@ -76,6 +76,30 @@ python .\tests\test_api.py
 
 Dettagli test in tests/README.md.
 
+## 7. Client mobile Flutter (sorgenti)
+
+Nel repository e' inclusa la cartella `mobile-client` con i sorgenti dell'app mobile.
+Le cartelle piattaforma generate da Flutter non sono versionate.
+
+Rigenerazione progetto:
+
+```powershell
+cd .\mobile-client
+flutter create .
+flutter pub get
+```
+
+Avvio su emulatore Android:
+
+```powershell
+& "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator.exe" -avd cucinometro_api_35 -no-snapshot-load -no-boot-anim
+cd .\mobile-client
+flutter run -d emulator-5554 --dart-define=API_BASE_URL=http://10.0.2.2:8000/api
+```
+
+Nota:
+- `10.0.2.2` e' il loopback dell'host visto dall'emulatore Android.
+
 ## Comandi utili
 
 Arrestare i servizi:

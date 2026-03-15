@@ -12,6 +12,7 @@ Per la guida completa di installazione e avvio ambiente (incluso precaricamento 
 - [install.md](install.md): installazione, avvio e comandi operativi
 - [comunicazioni.md](comunicazioni.md): mappa e grafici dei flussi tra i servizi
 - [tests/README.md](tests/README.md): panoramica e uso degli script di test
+- [mobile-client/README.md](mobile-client/README.md): client mobile Flutter
 
 ## Architettura
 - **API Backend**: FastAPI con PostgreSQL
@@ -103,6 +104,35 @@ L'algoritmo intelligente:
 .\tests\test-mcp.ps1
 ```
 
+## Client Mobile (Flutter)
+
+Nel repository sono versionati solo i sorgenti del client mobile.
+Le cartelle piattaforma generate automaticamente (`android/`, `ios/`, `web/`, `windows/`, `linux/`, `macos/`) non sono incluse.
+
+### Rigenerare il progetto Flutter
+
+```powershell
+cd .\mobile-client
+flutter create .
+flutter pub get
+```
+
+### Avvio su emulatore Android
+
+1. Avvia lo stack backend:
+   ```powershell
+   docker compose -f compose.yaml up -d --build
+   ```
+2. Avvia l'emulatore (esempio AVD: `cucinometro_api_35`):
+   ```powershell
+   & "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator.exe" -avd cucinometro_api_35 -no-snapshot-load -no-boot-anim
+   ```
+3. Avvia l'app mobile:
+   ```powershell
+   cd .\mobile-client
+   flutter run -d emulator-5554 --dart-define=API_BASE_URL=http://10.0.2.2:8000/api
+   ```
+
 ## Sviluppatori
 
 ### Struttura Progetto
@@ -111,6 +141,7 @@ L'algoritmo intelligente:
 ├── web/              # Frontend Django
 ├── gateway/          # Configurazione Kong
 ├── mcp-server/       # Server MCP per client AI
+├── mobile-client/    # Client mobile Flutter
 ├── sql/              # Script database
 ├── tests/            # Script di test
 ├── compose.yaml      # Docker Compose
